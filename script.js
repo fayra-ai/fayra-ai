@@ -136,7 +136,7 @@ async function submitMessage(text) {
 
   try {
     const response = await fetch(
-      "https://aiugrunsflrxmfigzum.supabase.co/functions/v1/fayra-chat",
+      "https://aiugerunsflrxmfigzum.supabase.co/functions/v1/fayra-chat",
       {
         method: "POST",
         headers: {
