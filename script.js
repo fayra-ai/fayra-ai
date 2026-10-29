@@ -139,14 +139,14 @@ async function submitMessage(text) {
       "https://aiugerunsflrxmfigzum.supabase.co/functions/v1/fayra-chat",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: content
-        })
-      }
-    );
+headers: {
+  "Content-Type": "application/json",
+  "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpdWdlcnVuc2ZscnhtZmlnenVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMTU2MTQsImV4cCI6MjEwODU5MTYxNH0.JMHmH6mKZBPZUj0QSVJ8w9rCxm9U6gUNQQBiqDi7c28",
+  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpdWdlcnVuc2ZscnhtZmlnenVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMTU2MTQsImV4cCI6MjEwODU5MTYxNH0.JMHmH6mKZBPZUj0QSVJ8w9rCxm9U6gUNQQBiqDi7c28"
+},
+body: JSON.stringify({
+  message: content
+})
 
     const data = await response.json();
 
