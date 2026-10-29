@@ -110,7 +110,8 @@ function addMessage(role, content) {
   renderChat();
 }
 
-function submitMessage(text) {
+
+async function submitMessage(text) {
   const content = (text || input.value).trim();
 
   if (!content) {
@@ -122,14 +123,92 @@ function submitMessage(text) {
     createChat();
   }
 
+  const chatId = activeChatId;
+
   addMessage("user", content);
   input.value = "";
   input.style.height = "auto";
 
-  // This is a UI-only preview.
-  // Real AI responses will be connected through a secure backend later.
-  showToast("Message added to local preview. AI is not connected yet.");
+  sendButton.disabled = true;
+  input.disabled = true;
+
+  addMessage("assistant", "Fayra is thinking...");
+
+  try {
+    const response = await fetch(
+      "https://aiugrunsflrxmfigzum.supabase.co/functions/v1/fayra-chat",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: content
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.details?.error?.message ||
+        data.error ||
+        `Request failed (${response.status})`
+      );
+    }
+
+    const chat = chats.find(item => item.id === chatId);
+
+    if (chat) {
+      const thinkingIndex = chat.messages.findIndex(
+        message =>
+          message.role === "assistant" &&
+          message.content === "Fayra is thinking..."
+      );
+
+      if (thinkingIndex !== -1) {
+        chat.messages[thinkingIndex].content =
+          data.reply || "Sorry, I couldn't generate a reply.";
+      }
+
+      renderHistory();
+
+      if (activeChatId === chatId) {
+        renderChat();
+      }
+    }
+  } catch (error) {
+    const chat = chats.find(item => item.id === chatId);
+
+    if (chat) {
+      const thinkingIndex = chat.messages.findIndex(
+        message =>
+          message.role === "assistant" &&
+          message.content === "Fayra is thinking..."
+      );
+
+      const errorMessage =
+        "Sorry, I couldn't connect to Fayra. Please try again.";
+
+      if (thinkingIndex !== -1) {
+        chat.messages[thinkingIndex].content = errorMessage;
+      }
+
+      if (activeChatId === chatId) {
+        renderChat();
+      }
+    }
+
+    console.error("Fayra error:", error);
+    showToast("Fayra connection failed. Check the browser console.");
+  } finally {
+    sendButton.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
 }
+
 
 $("#newChat").addEventListener("click", createChat);
 
